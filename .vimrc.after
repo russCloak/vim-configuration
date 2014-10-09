@@ -1,0 +1,123 @@
+set background=dark
+
+if has("gui_macvim")
+  colorscheme twilight
+  "let g:seoul256_background = 233
+  "colorscheme seoul256
+else
+  let g:seoul256_background = 233
+  colorscheme seoul256
+endif
+
+" show line numbers
+" set relativenumber
+set number
+set ruler
+
+" Set the word wrap character limit, this will force word wrap past the
+" specified column.
+set textwidth=78
+
+set gfn=Monaco:h18
+
+" The shell to use when using :!
+set shell=zsh
+
+" Set my leader key to be a comma
+let mapleader = ","
+
+" Some shortcut definitions
+map <leader>f :CtrlP<cr>
+map <leader>b :CtrlPBuffer<cr>
+
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip
+
+set statusline=%<%f\ (%{&ft})\ %-4(%m%)%=%-19(%3l,%02c%03V%)
+nnoremap <CR> :nohlsearch<cr>
+
+" Move around splits with <c-hjkl>
+nnoremap <c-j> <c-w>j
+nnoremap <c-k> <c-w>k
+nnoremap <c-h> <c-w>h
+nnoremap <c-l> <c-w>l
+
+" jump to buffer if already open, even if in another tab
+let g:ctrlp_switch_buffer = 2
+" set the local working directory to the nearest .git/ .hg/ .svn/ .bzr/
+let g:ctrlp_working_path_mode = 2
+" enable cross-session caching by not deleting cache files on exit
+let g:ctrlp_clear_cache_on_exit = 0
+" set the best match to be the top
+let g:ctrlp_match_window_reversed = 0
+" set max height of match window
+let g:ctrlp_max_height = 20
+let g:ctrlp_use_caching = 1
+let g:ctrlp_custom_ignore = {
+    \ 'dir':  '\v[\/](\.git|log|tmp|coverage|solr)$',
+    \ 'file': '\v\.(gem|log|tmp|swp)$',
+    \ }
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" GIT SHORTCUTS
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+map <leader>gs :Gstatus<cr>
+map <leader>gc :Gcommit<cr>
+map <leader>gp :!git push<cr>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" OPEN FILES IN DIRECTORY OF CURRENT FILE
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+cnoremap %% <C-R>=expand('%:h').'/'<cr>
+map <leader>e :edit %%
+map <leader>v :view %%
+
+" Duplicate line in visual mode - Command + d
+vmap <D-D> <C-c>:let @f=@"<cr>y'<'>p:let @"=@f<cr>
+
+" Make cap Y yank from current position to end of line
+nmap <S-y> y$
+
+" Map all the run test calls provided by vim-test-recall
+"noremap <D-T> :call RunAllTestsInCurrentTestFile()<cr>
+"noremap <D-R> :call RunNearestTest()<cr>
+
+" Open the alternate test file
+nnoremap <leader>. :OpenAlternate<cr>
+
+" RuboCop syntax checker
+nmap <leader>re :RuboCop<cr>
+
+" Rails logger ...
+nmap <leader>rl ORails.logger.error "\n\n\n#{self.class}##{__method__}\n\n\n"<Esc>
+
+" Test runners
+function! RunCurrentTest()
+  :w
+  let file = expand('%:p')
+  let line = line('.')
+  let command_text = ':! bundle exec rspec '.file.':'.line.' --no-color --format progress'
+  let @t = command_text
+  :exec command_text
+endfunction
+
+function! RunFileTests()
+  :w
+  let file = expand('%:p')
+  let command_text = ':! bundle exec rspec '.file.' --no-color --format progress'
+  let @t = command_text
+  :exec command_text
+endfunction
+
+function! RunLastTest()
+  :w
+  let command_text = @t
+  :exec command_text
+endfunction
+
+" Test runner mappings
+nnoremap <D-R> :call RunCurrentTest()<cr>
+nnoremap <D-E> :call RunLastTest()<cr>
+nnoremap <D-T> :call RunFileTests()<cr>
+
+" Nerdtree
+nmap <leader>n :NERDTreeFocus<cr>
